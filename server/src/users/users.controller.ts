@@ -1,11 +1,29 @@
-import { Controller, Get, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Res,
+  Patch,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { HttpCode, Req, UseGuards, ForbiddenException } from '@nestjs/common';
+import { CreateUserInputDTO, CreatedUserDto } from './dto/create-user.dto';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import {
+  HttpCode,
+  Req,
+  UseGuards,
+  ForbiddenException,
+  INestApplication,
+} from '@nestjs/common';
 import { AccessTokenGuard, RefreshTokenGuard } from 'src/common/guards';
 import { GetCurrentUser } from 'src/common/decorators';
-import { TRPCService } from 'src/trpc/trpc.service';
+import { TRPCService, createTRPCContext } from 'src/trpc/trpc.service';
 import { z } from 'zod';
+import { loginUserDTO } from './dto/login-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('auth')
 export class UsersController {
   constructor(
@@ -13,16 +31,10 @@ export class UsersController {
     private readonly tRPCService: TRPCService,
   ) {}
 
-  // authRouter = this.tRPCService.router({
-  //   create:this.tRPCService.procedure.input(z.object({name:z.string(), email:z.string(), password:z.string()})).mutation(({input, ctx})=>{
-
-  //     return this.usersService.create(input)
-  //   }),
-  // });
   @Post('/register')
   @HttpCode(201)
   async create(
-    @Body() createUserDto: CreateUserDto,
+    @Body() createUserDto: CreateUserInputDTO,
     @Res({ passthrough: true }) res: any,
   ) {
     return this.usersService.create(createUserDto, res);
@@ -31,7 +43,7 @@ export class UsersController {
   @Post('/login')
   @HttpCode(201)
   login(
-    @Body() createUserDto: CreateUserDto,
+    @Body() createUserDto: loginUserDTO,
     @Res({ passthrough: true }) res: any,
   ) {
     return this.usersService.login(createUserDto, res);
@@ -53,6 +65,20 @@ export class UsersController {
       user['refreshToken'],
       res,
     );
+  }
+
+  @Post('/upload-profile')
+  @UseInterceptors(FileInterceptor('image'))
+  @UseGuards(AccessTokenGuard)
+  uploadProfilePhoto(
+    @GetCurrentUser() user: number,
+    @Req() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      return new Error('No file provided');
+    }
+    return this.usersService.uploadProfileImage(file, user['userId']);
   }
 
   @Get()

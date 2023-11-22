@@ -24,8 +24,9 @@ export default function RegisterOrLoginHeading() {
         <span
           className="text-[#4461F2] font-poppins font-[500] cursor-pointer"
           onClick={() => {
-            context.setRegisterOrLogin((prev: "register" | "login") => {
-              context.registerOrLogin === "register" ? "login" : "register";
+            //@ts-ignore
+            context.setRegisterOrLogin((prevState: "register" | "login") => {
+              prevState === "register" ? "login" : "register";
             });
           }}
         >

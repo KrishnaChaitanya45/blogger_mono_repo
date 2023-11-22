@@ -4,7 +4,9 @@ import GirlAvatar from "../../../public/women_in_background.svg";
 import Navbar from "./Navbar";
 import RegisterOrLoginHeading from "./RegisterOrLogin._Heading";
 import AuthForm from "@/forms/AuthForm";
-
+import { useRef } from "react";
+import NotificationGenerator from "@/components/ToastMessage";
+type AddFunction = (msg: { msg: string; title: string; type: string }) => void;
 function Register() {
   return (
     <main

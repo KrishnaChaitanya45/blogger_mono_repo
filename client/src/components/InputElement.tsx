@@ -2,7 +2,7 @@
 import { RxCrossCircled } from "react-icons/rx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 type InputProps = {
-  key: number | string;
+  uniqueKey: number | string;
   name: string;
   value: string;
   onChange: () => void;
@@ -13,7 +13,7 @@ type InputProps = {
 import { useRef, useState } from "react";
 
 export default function InputElement({
-  key,
+  uniqueKey,
   name,
   value,
   isPassword,
@@ -28,7 +28,7 @@ export default function InputElement({
   return (
     <div className="w-[20vw] font-abhaya_libre flex items-center">
       <input
-        key={key}
+        key={uniqueKey}
         name={name}
         placeholder={`Enter ${name[0].toUpperCase() + name.slice(1)}`}
         value={value}

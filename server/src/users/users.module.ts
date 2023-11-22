@@ -6,6 +6,7 @@ import { AccessTokenStrategy, RefreshTokenStrategy } from 'src/strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { tRPCModule } from 'src/trpc/trpc.module';
 import { TRPCService } from 'src/trpc/trpc.service';
+import { CloudinaryProvider } from 'src/common/providers/Cloudinary.provider';
 
 @Module({
   controllers: [UsersController],
@@ -13,6 +14,7 @@ import { TRPCService } from 'src/trpc/trpc.service';
     UsersService,
     AccessTokenStrategy,
     RefreshTokenStrategy,
+    CloudinaryProvider,
     TRPCService,
   ],
   imports: [PrismaModule, JwtModule.register({}), tRPCModule],
